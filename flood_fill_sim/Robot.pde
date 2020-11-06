@@ -1,28 +1,57 @@
 class Robot{
   color robot_color;
-  float xpos, ypos;
+  float xPos, yPos;
   float speed, bearing;
-  float speed_diff = 0.25, bearing_diff = 1;
+  float speed_diff = 0.01, bearing_diff = 0.1;
   
   Robot(){
    robot_color = color(255);
-   xpos = width/2;
-   ypos = height/2;
+   xPos = width/2;
+   yPos = height/2;
    speed = 0;
    bearing = 0;
   }
   
-  float inc_speed()
+  void set_speed(float s)
   {
-    return speed += speed_diff;
+   if(s > speed)
+   {
+       inc_speed();
+   }
+   else if(s < speed)
+   {
+      dec_speed(); 
+   }
   }
   
-  float dec_speed()
+  void set_bearing(float b)
   {
-   return speed -= speed_diff; 
+   if(b > 360)
+   {
+    b = 360; 
+   }
+   
+   if(b > bearing)
+   {
+    rotateCW(); 
+   }
+   else if(b < bearing)
+   {
+     rotateCCW();
+   }
   }
   
-  float rotateCC()
+  void inc_speed()
+  {
+    speed += speed_diff;
+  }
+  
+  void dec_speed()
+  {
+   speed -= speed_diff; 
+  }
+  
+  void rotateCW()
   {
      bearing += bearing_diff;
 
@@ -30,10 +59,9 @@ class Robot{
      {
        bearing -= 360;
      }
-     return bearing;
   }
 
-  float rotateCCW()
+  void rotateCCW()
   {
     bearing -= bearing_diff;
 
@@ -41,19 +69,39 @@ class Robot{
     {
       bearing += 360;
     }
-
-    return bearing;
   }
 
   void update()
   {
+    move();
     pushMatrix();
     stroke(255);
     rotate(radians(bearing));
     fill(robot_color);
     rectMode(CENTER);
-    rect(xpos, ypos, 10, 20);
+    rect(xPos, yPos, 10, 20);
     popMatrix();
+  }
+  
+  void move()
+  {
+   xPos = xPos + speed*sin(radians(bearing));
+   yPos = yPos + speed*cos(radians(bearing));
+  }
+  
+  void setPosition(int x, int y)
+  {
+   if(x > width)
+   {
+     x = width;
+   }
+   if(y > height)
+   {
+    y = height; 
+   }
+   
+   xPos = x;
+   yPos = y;
   }
   
 };
