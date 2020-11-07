@@ -76,10 +76,11 @@ class Robot{
     move();
     pushMatrix();
     stroke(255);
+    translate(xPos, yPos);
     rotate(radians(bearing));
     fill(robot_color);
     rectMode(CENTER);
-    rect(xPos, yPos, 10, 20);
+    rect(0, 0, 10, 20);
     popMatrix();
   }
   

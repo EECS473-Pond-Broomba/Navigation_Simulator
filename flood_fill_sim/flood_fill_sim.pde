@@ -2,6 +2,7 @@ import controlP5.*;
 
 Robot rob;
 ControlP5 cp5;
+GeoFence gf;
 
 boolean startVal = false, modeVal = false;
 
@@ -11,6 +12,9 @@ void setup()
   
   cp5 = new ControlP5(this);
   rob = new Robot();
+  gf = new GeoFence();
+  
+  gf.set_pos(100, 100, 50);
   
   cp5.addToggle("startVal")
      .setPosition(50, height-75)
@@ -41,6 +45,7 @@ void draw()
    fill(100);
    rect(0, height - 100, width, 100); 
   rob.update();
+  gf.update();
 }
 
 void mouseClicked()
