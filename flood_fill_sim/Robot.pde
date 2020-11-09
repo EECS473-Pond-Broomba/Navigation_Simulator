@@ -2,7 +2,7 @@ class Robot{
   color robot_color;
   float xPos, yPos;
   float speed, bearing;
-  float speed_diff = 0.01, bearing_diff = 0.1;
+  float speed_diff = 0.01, bearing_diff = 1;
   
   Robot(){
    robot_color = color(255);
@@ -87,8 +87,26 @@ class Robot{
   void move()
   {
    xPos = xPos + speed*sin(radians(bearing));
-   yPos = yPos + speed*cos(radians(bearing));
+   yPos = yPos - speed*cos(radians(bearing));
+   if(xPos > width)
+   {
+     xPos = width;
+   }
+   else if(xPos < 0)
+   {
+     xPos = 0;
+   }
+   
+   if(yPos > height)
+   {
+      yPos = height;
+   }
+   else if(yPos < 0)
+   {
+    yPos = 0; 
+   }
   }
+  
   
   void setPosition(int x, int y)
   {

@@ -1,12 +1,8 @@
 class Position{
     int xPos, yPos;
-    float weight;
-    boolean visited;
 
-    Position(int xIn, int yIn, float weightIn, boolean visitedIn) {
+    Position(int xIn, int yIn) {
         xPos = xIn;
         yPos = yIn;
-        weight = weightIn;
-        visited = visitedIn;
     }
 };

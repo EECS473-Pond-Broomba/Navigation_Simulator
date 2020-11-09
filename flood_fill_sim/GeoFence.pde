@@ -20,6 +20,12 @@ class GeoFence{
         }
     }
     
+    float get_dist(float x, float y)
+    {
+      return radius - sqrt(sq((centerX -x)) + sq((centerY - y)));
+      
+    }
+    
     void set_pos(float x, float y, float rad)
     {
         centerX = x;

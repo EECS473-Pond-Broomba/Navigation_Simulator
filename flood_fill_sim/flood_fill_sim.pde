@@ -14,7 +14,7 @@ void setup()
   rob = new Robot();
   gf = new GeoFence();
   
-  gf.set_pos(100, 100, 50);
+  gf.set_pos(200, 600, 200);
   
   cp5.addToggle("startVal")
      .setPosition(50, height-75)
@@ -32,7 +32,7 @@ void draw()
   {
     
   rob.set_speed(1.5);
-  rob.set_bearing(90);
+  rob.set_bearing(270);
   }
   
   else
@@ -44,8 +44,9 @@ void draw()
    rectMode(CORNER);
    fill(100);
    rect(0, height - 100, width, 100); 
-  rob.update();
+  
   gf.update();
+  rob.update();
 }
 
 void mouseClicked()
