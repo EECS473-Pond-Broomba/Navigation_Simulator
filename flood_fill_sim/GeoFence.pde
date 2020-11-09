@@ -5,7 +5,7 @@ class GeoFence{
     int in_fence(float x, float y)
     {
         float d = radius - sqrt(sq((centerX -x)) + sq((centerY - y)));
-
+        
         if(d < -1)
         {
             return 0;
@@ -28,6 +28,10 @@ class GeoFence{
     
     void set_pos(float x, float y, float rad)
     {
+      if(y >= height -100)
+      {
+        return;
+      }
         centerX = x;
         centerY = y;
         radius = rad;

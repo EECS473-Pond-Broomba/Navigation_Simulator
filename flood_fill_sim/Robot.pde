@@ -80,7 +80,7 @@ class Robot{
     rotate(radians(bearing));
     fill(robot_color);
     rectMode(CENTER);
-    rect(0, 0, 10, 20);
+    rect(0, 0, 10, 10);
     popMatrix();
   }
   
@@ -110,6 +110,11 @@ class Robot{
   
   void setPosition(int x, int y)
   {
+    
+      if(y >= height -100)
+      {
+        return;
+      }
    if(x > width)
    {
      x = width;

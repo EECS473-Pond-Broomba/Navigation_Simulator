@@ -3,6 +3,7 @@ import controlP5.*;
 Robot rob;
 ControlP5 cp5;
 GeoFence gf;
+FloodFill ff;
 
 boolean startVal = false, modeVal = false;
 
@@ -13,6 +14,7 @@ void setup()
   cp5 = new ControlP5(this);
   rob = new Robot();
   gf = new GeoFence();
+  ff = new FloodFill(rob, gf);
   
   gf.set_pos(200, 600, 200);
   
@@ -31,8 +33,12 @@ void draw()
   if(startVal)
   {
     
-  rob.set_speed(1.5);
-  rob.set_bearing(270);
+  //rob.set_speed(1.5);
+  //rob.set_bearing(270);
+  ff.update();
+  println("Target bearing: " + ff.targetBearing);
+  println("Target X: " + ff.targetX + " Target Y: " + ff.targetY);
+  ff.move();
   }
   
   else
@@ -51,8 +57,16 @@ void draw()
 
 void mouseClicked()
 {
+  if(startVal)
+  {
+    return;
+  }
  if(modeVal)
  {
   rob.setPosition(mouseX, mouseY); 
+ }
+ else
+ {
+   ff.updateGeofence(mouseX, mouseY, 200);
  }
 }

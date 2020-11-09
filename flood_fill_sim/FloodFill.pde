@@ -88,6 +88,7 @@ class FloodFill{
         Position nextPosition[] = new Position[4];
         // previousGeoFenceStatus = currentGeoFenceStatus;
         currentGeoFenceStatus = activeGeofence.in_fence(robot.xPos, robot.yPos);
+        println("Geofence Status: " + currentGeoFenceStatus);
         // If robot is in geofence
         if(currentGeoFenceStatus == 1) {
             // Do flood fill algorithm
@@ -115,7 +116,12 @@ class FloodFill{
             if(maxWeight > 0) {
                 targetX = nextPosition[max_idx].xPos;
                 targetY = nextPosition[max_idx].yPos;
-                targetBearing = (degrees(atan2(targetX - robot.yPos, targetX - robot.xPos)) - 90) % 360;
+                targetBearing =(degrees(atan((activeGeofence.centerY - robot.yPos)/(activeGeofence.centerX - robot.xPos))));
+
+             if(targetBearing <0)
+             {
+              targetBearing += 360; 
+             }
             }
             // TODO: If weight is negative, go towards center of geofence
             else {
@@ -124,22 +130,22 @@ class FloodFill{
             // TODO: HOW DO WE FIGURE OUT WHEN GEOFENCE IS DONE
         }
         // If robot not in geofence
-        else if(currentGeoFenceStatus == -1) {            
+        else {            
             // Move robot in direction of center of geofence
-             targetBearing = (degrees(atan2(activeGeofence.centerY - robot.yPos, activeGeofence.centerX - robot.xPos)) - 90) % 360;
-            // Only drive forward if the error in bearing is less than 5 deg
+             targetBearing =(degrees(atan((activeGeofence.centerY - robot.yPos)/(activeGeofence.centerX - robot.xPos))));
+             if(targetBearing <0)
+             {
+              targetBearing += 360; 
+             }
+          
             
-        }
-        //If unknown
-        else {
-            // What is the right behavior for unknown geofence status?
-            // Should we maybe keep a history of status?
         }
     }
     
     void move()
     {
-     if(abs(robot.bearing - targetBearing) < 2.5) {
+      println("Robot bearing: " + robot.bearing);
+     if(abs(robot.bearing - targetBearing) < 5) {
                 robot.set_speed(1.0);
             }
             else {
