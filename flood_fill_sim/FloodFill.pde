@@ -1,12 +1,12 @@
 import java.util.HashSet;
+int stepSize;   // Simulation distance between adjacent points
 
 class FloodFill{
     Robot robot;
     GeoFence activeGeofence;
-    HashSet<Position> pos_set = new HashSet<Position>();
+    HashSet<String> pos_set = new HashSet<String>();
     float targetBearing;
-    int stepSize;   // Simulation distance between adjacent points
-    int targetX, targetY;
+    float targetX, targetY;
     // positions array keeps track of which places have been visited
     // int previousGeoFenceStatus;
     int currentGeoFenceStatus;
@@ -26,29 +26,57 @@ class FloodFill{
         activeGeofence.set_pos(x, y, radius);
     }
     
+    void setTargetBearing(Position p1, Position p2)
+    {
+      if(p1.getY() - p2.getY() == 0)
+      {
+        if(p2.getX() > p1.getX())
+        {
+         targetBearing = 270; 
+        }
+        else
+        {
+          targetBearing = 90;
+        }
+        return;
+      }
+      
+      targetBearing =180 - (degrees(atan((p1.getX() - p2.getX())/(p1.getY() - p2.getY()))));
+                
+      if(p2.getY() > p1.getY())
+      {
+        targetBearing -= 180;
+      }
+
+     if(targetBearing <0)
+     {
+      targetBearing += 360; 
+     }
+    }
+    
     int num_visited_adj_block(Position p)
     {
       int val = 0;
-      Position pos = new Position(p.xPos-stepSize, p.yPos);
-      if(pos_set.contains(pos))
+      Position pos = new Position((int)(p.getX()-stepSize), (int)p.getY());
+      if(pos_set.contains(pos.getString()))
       {
         val++;
       }
       
-      pos = new Position(p.xPos, p.yPos - stepSize);
-      if(pos_set.contains(pos))
+      pos = new Position((int)p.getX(), (int)(p.getY() - stepSize));
+      if(pos_set.contains(pos.getString()))
       {
        val++; 
       }
       
-      pos = new Position(p.xPos, p.yPos + stepSize);
-      if(pos_set.contains(pos))
+      pos = new Position((int)p.getX(), (int)(p.getY() + stepSize));
+      if(pos_set.contains(pos.getString()))
       {
        val++; 
       }
       
-      pos = new Position(p.xPos + stepSize, p.yPos);
-      if(pos_set.contains(pos))
+      pos = new Position((int)(p.getX()+stepSize), (int)p.getY());
+      if(pos_set.contains(pos.getString()))
       {
        val++; 
       }
@@ -63,9 +91,9 @@ class FloodFill{
     int calculateWeight(Position p)
     {
       int score = 0;
-      int gfStatus = activeGeofence.in_fence(p.xPos, p.yPos);
+      int gfStatus = activeGeofence.in_fence(p.getX(), p.getY());
       
-      if(pos_set.contains(p) || gfStatus == 0)
+      if(pos_set.contains(p.getString()) || gfStatus == 0) //<>//
       {
         return -1;
       }
@@ -74,7 +102,7 @@ class FloodFill{
         score++; 
       }
       
-      float dist_edge = activeGeofence.get_dist(p.xPos, p.yPos);
+      float dist_edge = activeGeofence.get_dist(p.getX(), p.getY());
       
       if(dist_edge <= 10)
       {
@@ -91,23 +119,14 @@ class FloodFill{
       {
         return true;
       }
+      pos_set.add(new Position((int)rob.xPos, (int)rob.yPos).getString());
       int xDiff = abs((int)(targetX - rob.xPos));
       int yDiff = abs((int)(targetY - rob.yPos));
            
       
       if(xDiff > stepSize || yDiff > stepSize)
       {
-        targetBearing =180 - (degrees(atan((targetX - robot.xPos)/(targetY - robot.yPos))));
-                
-                if(robot.yPos > activeGeofence.centerY)
-                {
-                  targetBearing -= 180;
-                }
-
-               if(targetBearing <0)
-               {
-                targetBearing += 360; 
-               }
+        setTargetBearing(new Position((int)targetX, (int)targetY), new Position((int)robot.xPos,(int) robot.yPos));
         return false;
       }
       return true;
@@ -143,52 +162,35 @@ class FloodFill{
                   max_idx = i;
                 }
             }
-
+            println("Max weight position: " + maxWeight );
             // TODO: If weight is positive, go to point
             if(maxWeight > 0) {
-                targetX = nextPosition[max_idx].xPos;
-                targetY = nextPosition[max_idx].yPos;
-                pos_set.add(new Position(targetX, targetY));
-                targetBearing =180 - (degrees(atan((targetX - robot.xPos)/(targetY - robot.yPos))));
-                
-                if(robot.yPos > activeGeofence.centerY)
-                {
-                  targetBearing -= 180;
-                }
-
-             if(targetBearing <0)
-             {
-              targetBearing += 360; 
-             }
+                targetX = nextPosition[max_idx].getX() ;
+                targetY = nextPosition[max_idx].getY();
+                setTargetBearing(new Position((int)targetX, (int)targetY), new Position((int)robot.xPos,(int) robot.yPos));
             }
             // TODO: If weight is negative, go towards center of geofence
             else {
-
+              targetX = gf.centerX ;
+              targetY = gf.centerY;
+              setTargetBearing(new Position((int)gf.centerX, (int)gf.centerY), new Position((int)robot.xPos,(int) robot.yPos));
             }
             // TODO: HOW DO WE FIGURE OUT WHEN GEOFENCE IS DONE
         }
         // If robot not in geofence
         else {            
             // Move robot in direction of center of geofence
-             targetBearing = 180 - (degrees(atan((activeGeofence.centerX - robot.xPos)/(activeGeofence.centerY - robot.yPos))));
-             if(robot.yPos > activeGeofence.centerY)
-                {
-                  targetBearing -= 180;
-                }
-             if(targetBearing <0)
-             {
-              targetBearing += 360; 
-             }
+             setTargetBearing(new Position((int)gf.centerX, (int)gf.centerY), new Position((int)robot.xPos,(int) robot.yPos));
           
-            
         }
     }
     
     void move()
     {
       println("Robot bearing: " + robot.bearing);
-     if(abs(robot.bearing - targetBearing) < 2) {
-                robot.set_speed(1);
+      
+     if(abs(robot.bearing - targetBearing) < 5) {
+                robot.set_speed(1.5);
             }
             else {
                 robot.set_speed(0);

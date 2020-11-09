@@ -17,6 +17,8 @@ void setup()
   gf = new GeoFence();
   ff = new FloodFill(rob, gf);
   
+  frameRate(120);
+  
   gf.set_pos(200, 600, gf_rad);
   
   cp5.addToggle("startVal")
