@@ -16,6 +16,8 @@ class FloodFill{
         robot = robotIn;
         activeGeofence = gfIn;
         stepSize = 10;      // Same width as robot
+        targetX = -1;
+        targetY = -1;
         // previousGeoFenceStatus = 0;
         // currentGeoFenceStatus = 0;
     }
@@ -82,6 +84,34 @@ class FloodFill{
       score += num_visited_adj_block(p);
       return score;
     }
+    
+    boolean checkPos()
+    {
+      if(targetX == -1 && targetY == -1)
+      {
+        return true;
+      }
+      int xDiff = abs((int)(targetX - rob.xPos));
+      int yDiff = abs((int)(targetY - rob.yPos));
+           
+      
+      if(xDiff > stepSize || yDiff > stepSize)
+      {
+        targetBearing =180 - (degrees(atan((targetX - robot.xPos)/(targetY - robot.yPos))));
+                
+                if(robot.yPos > activeGeofence.centerY)
+                {
+                  targetBearing -= 180;
+                }
+
+               if(targetBearing <0)
+               {
+                targetBearing += 360; 
+               }
+        return false;
+      }
+      return true;
+    }
 
     void update() {
         Position nextPosition[] = new Position[4];
@@ -89,7 +119,11 @@ class FloodFill{
         currentGeoFenceStatus = activeGeofence.in_fence(robot.xPos, robot.yPos);
         println("Geofence Status: " + currentGeoFenceStatus);
         // If robot is in geofence
-        if(currentGeoFenceStatus == 1) {
+        if(currentGeoFenceStatus != 0) {
+           if(!checkPos())
+           {
+            return; 
+           }
             // Do flood fill algorithm
             // Mark position as visited
             // Add 4 neighbors to list of possible next step
@@ -154,7 +188,7 @@ class FloodFill{
     {
       println("Robot bearing: " + robot.bearing);
      if(abs(robot.bearing - targetBearing) < 2) {
-                robot.set_speed(5);
+                robot.set_speed(1);
             }
             else {
                 robot.set_speed(0);
