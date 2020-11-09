@@ -8,7 +8,6 @@ class FloodFill{
     int stepSize;   // Simulation distance between adjacent points
     int targetX, targetY;
     // positions array keeps track of which places have been visited
-    boolean[][] positions = new boolean[80][100];   // Screen size divided by step size
     // int previousGeoFenceStatus;
     int currentGeoFenceStatus;
     // boolean direction;  // Stores what direction robot is moving in, true is moving "left"
@@ -93,7 +92,6 @@ class FloodFill{
         if(currentGeoFenceStatus == 1) {
             // Do flood fill algorithm
             // Mark position as visited
-            positions[(int)robot.yPos / stepSize][(int)robot.xPos / stepSize] = true;
             // Add 4 neighbors to list of possible next step
             nextPosition[0] = new Position((int)robot.xPos, (int)robot.yPos-stepSize);
             nextPosition[1] = new Position((int)robot.xPos+stepSize, (int)robot.yPos);
@@ -116,7 +114,13 @@ class FloodFill{
             if(maxWeight > 0) {
                 targetX = nextPosition[max_idx].xPos;
                 targetY = nextPosition[max_idx].yPos;
-                targetBearing =(degrees(atan((activeGeofence.centerY - robot.yPos)/(activeGeofence.centerX - robot.xPos))));
+                pos_set.add(new Position(targetX, targetY));
+                targetBearing =180 - (degrees(atan((targetX - robot.xPos)/(targetY - robot.yPos))));
+                
+                if(robot.yPos > activeGeofence.centerY)
+                {
+                  targetBearing -= 180;
+                }
 
              if(targetBearing <0)
              {
@@ -132,7 +136,11 @@ class FloodFill{
         // If robot not in geofence
         else {            
             // Move robot in direction of center of geofence
-             targetBearing =(degrees(atan((activeGeofence.centerY - robot.yPos)/(activeGeofence.centerX - robot.xPos))));
+             targetBearing = 180 - (degrees(atan((activeGeofence.centerX - robot.xPos)/(activeGeofence.centerY - robot.yPos))));
+             if(robot.yPos > activeGeofence.centerY)
+                {
+                  targetBearing -= 180;
+                }
              if(targetBearing <0)
              {
               targetBearing += 360; 
@@ -145,10 +153,11 @@ class FloodFill{
     void move()
     {
       println("Robot bearing: " + robot.bearing);
-     if(abs(robot.bearing - targetBearing) < 5) {
-                robot.set_speed(1.0);
+     if(abs(robot.bearing - targetBearing) < 2) {
+                robot.set_speed(5);
             }
             else {
+                robot.set_speed(0);
                 robot.set_bearing(targetBearing);
             } 
     }

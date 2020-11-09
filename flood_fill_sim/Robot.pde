@@ -2,7 +2,7 @@ class Robot{
   color robot_color;
   float xPos, yPos;
   float speed, bearing;
-  float speed_diff = 0.01, bearing_diff = 1;
+  float speed_diff = 0.1, bearing_diff = 1;
   
   Robot(){
    robot_color = color(255);

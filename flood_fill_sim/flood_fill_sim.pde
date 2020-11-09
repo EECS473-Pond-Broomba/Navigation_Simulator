@@ -6,6 +6,7 @@ GeoFence gf;
 FloodFill ff;
 
 boolean startVal = false, modeVal = false;
+float gf_rad = 150;
 
 void setup()
 {
@@ -16,7 +17,7 @@ void setup()
   gf = new GeoFence();
   ff = new FloodFill(rob, gf);
   
-  gf.set_pos(200, 600, 200);
+  gf.set_pos(200, 600, gf_rad);
   
   cp5.addToggle("startVal")
      .setPosition(50, height-75)
@@ -67,6 +68,6 @@ void mouseClicked()
  }
  else
  {
-   ff.updateGeofence(mouseX, mouseY, 200);
+   ff.updateGeofence(mouseX, mouseY, gf_rad);
  }
 }

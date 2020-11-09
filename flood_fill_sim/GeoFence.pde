@@ -42,8 +42,7 @@ class GeoFence{
         pushMatrix();
         stroke(255, 100, 0);
         fill(255, 0, 0);
-        ellipseMode(CENTER);
-        ellipse(centerX, centerY, radius, radius);
+        circle(centerX,centerY,2*radius);
         popMatrix();
     }
 };
