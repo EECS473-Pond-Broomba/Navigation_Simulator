@@ -106,7 +106,7 @@ class FloodFill{
       
       if(dist_edge <= 10)
       {
-       score += 2; 
+       score += 5; 
       }
       
       score += num_visited_adj_block(p);

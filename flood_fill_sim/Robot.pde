@@ -2,7 +2,7 @@ class Robot{
   color robot_color;
   float xPos, yPos;
   float speed, bearing;
-  float speed_diff = 0.5, bearing_diff = 3;
+  float speed_diff = 0.5, bearing_diff = 1;
   
   Robot(){
    robot_color = color(255);
@@ -26,16 +26,22 @@ class Robot{
   
   void set_bearing(float b)
   {
-   if(b > 360)
+   if(b >= 360)
    {
-    b = 360; 
+    b -= 360; 
+   }
+   if(abs(bearing - b) < bearing_diff)
+   {
+    return; 
    }
    
-   if(b > bearing)
+   float b_diff = (b - bearing + 540)%360 -180;
+   
+   if(b_diff > 0)
    {
     rotateCW(); 
    }
-   else if(b < bearing)
+   else
    {
      rotateCCW();
    }
@@ -55,7 +61,7 @@ class Robot{
   {
      bearing += bearing_diff;
 
-     if(bearing > 360)
+     if(bearing >= 360)
      {
        bearing -= 360;
      }
